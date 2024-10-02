@@ -44,13 +44,15 @@ class TeamViewSet(viewsets.ModelViewSet):
         except Team.DoesNotExist:
             return Response({'detail': 'Team not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    def list(self, request, *args, **kwargs):
-        user_teams = self.queryset.filter(members=request.user)
-        serializer = self.get_serializer(user_teams, many=True)
-        return Response(serializer.data)
+
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def my_own_teams(self, request):
         user_teams = self.queryset.filter(owner=request.user)
+        serializer = self.get_serializer(user_teams, many=True)
+        return Response(serializer.data)
+
+    def list(self, request, *args, **kwargs):
+        user_teams = self.queryset.filter(members=request.user)
         serializer = self.get_serializer(user_teams, many=True)
         return Response(serializer.data)
